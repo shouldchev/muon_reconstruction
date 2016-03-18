@@ -16,11 +16,15 @@ void LiRate_raw_2 (){
 
     //Getting the number of lines in the simulation datafile
     Int_t numLines0=0;
-    if(numLines0==0){string unused1;
+    if(numLines0==0){string unused1; int kt[300000]; int k2=0; int k=0;
         while (getline(junk,unused1)){
-                if(!junk){cout<<"error opening file"<<endl;}//if junk
-                ++numLines0;
-            }//while
+            kt[numLines0]=k;
+            k2=k/2;
+            if(k==2*k2 && unused1=="1"){cout<<"Problem in file at line "<<k<<endl; return;}
+            if(!junk){cout<<"error opening file"<<endl;}//if junk
+            ++numLines0;
+            k++;
+       }//while
     }//if numlines
     junk.close();
     numLines0=(numLines0+1)/2.;
@@ -36,7 +40,7 @@ void LiRate_raw_2 (){
     Int_t check=0;
 
     Double_t R=35.4/2.;
-    Double_t Rate=3.5;
+    Double_t Rate=3.75;
     Double_t factor=0.0215;
 
     //Opening the datafile and creating rootfile and tree
