@@ -17,8 +17,8 @@ Double_t Z2;
 Int_t signe;
 
 Double_t E;
-Double_t Length[10];
-Double_t LiRate[10];
+Double_t Length;
+Double_t LiRate;
 Double_t LiRateInt;
 UInt_t check;
 Double_t a,b,c,d;
