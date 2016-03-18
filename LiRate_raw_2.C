@@ -40,7 +40,7 @@ void LiRate_raw_2 (){
     Int_t check=0;
 
     Double_t R=35.4/2.;
-    Double_t Rate=3.75;
+    Double_t Rate=13;
     Double_t factor=0.0215;
 
     //Opening the datafile and creating rootfile and tree
@@ -58,8 +58,8 @@ void LiRate_raw_2 (){
     TBranch *b_momY=myTree->Branch("momY",&Yp,"momY/d");
     TBranch *b_momZ=myTree->Branch("momZ",&Zp,"momZ/d");
     TBranch *b_E=myTree->Branch("Energy",&E,"Energy/d");
-    TBranch *b_Length=myTree->Branch("Length",&Length,"Length[check]/d");
-    TBranch *b_LiRate=myTree->Branch("LiRate",&LiRate,"LiRate[check]/d");
+    TBranch *b_Length=myTree->Branch("Length",&Length,"Length/d");
+    TBranch *b_LiRate=myTree->Branch("LiRate",&LiRate,"LiRate/d");
     TBranch *b_LiRateInt=myTree->Branch("LiRateInt",&LiRateInt,"LiRateInt/d");
     TBranch *b_numInDet=myTree->Branch("numInDet",&numInDet,"numInDet/d");
 
@@ -67,7 +67,8 @@ void LiRate_raw_2 (){
         LiRate[0]=0;
         check=0;
         evtID=i;
-        file>>junk2>>signe>>junk2>>junk2>>Xp>>Yp>>Zp>>junk2>>junk2>>Xm>>Ym>>Zm>>junk2;
+        if(i!=numLines-1){file>>junk2>>signe>>junk2>>junk2>>Xp>>Yp>>Zp>>junk2>>junk2>>Xm>>Ym>>Zm>>junk2;}
+        if(i==numLines-1){file>>junk2>>signe>>junk2>>junk2>>Xp>>Yp>>Zp>>junk2>>junk2>>Xm>>Ym>>Zm;}
         Xm=Xm/1000.;
         Ym=Ym/1000.;
         Zm=Zm/1000.;
@@ -81,16 +82,17 @@ void LiRate_raw_2 (){
             K[0]=(-b+TMath::Sqrt(d))/(2*a);
             K[1]=(-b-TMath::Sqrt(d))/(2*a);
             numInDet++;
-            Length[0]=TMath::Sqrt( Xp*Xp*(K[1]-K[0])*(K[1]-K[0]) +  Yp*Yp*(K[1]-K[0])*(K[1]-K[0]) +Zp*Zp*(K[1]-K[0])*(K[1]-K[0]) );
-            LiRate[0]=factor*pow(E,0.74)*Length[0]*Rate;            
+            Length=TMath::Sqrt( Xp*Xp*(K[1]-K[0])*(K[1]-K[0]) +  Yp*Yp*(K[1]-K[0])*(K[1]-K[0]) +Zp*Zp*(K[1]-K[0])*(K[1]-K[0]) );
+            LiRate=factor*pow(E,0.74)*Length*Rate;
         }//if d
-        LiRateInt+=LiRate[0];
-        if(i==numLines-1){LiRateInt=LiRateInt/numInDet;}
+        if(d<=0){Length=0;LiRate=0;}
+        LiRateInt+=LiRate;
+        if(i==numLines-1){LiRateInt=LiRateInt/numLines;}
         myTree->Fill();
     }// for i
     cout<<"Number of muons passing in detector : "<<numInDet<<endl;
     cout<<"Lithium rate : "<<LiRateInt<<endl;
-    cout<<"Time : "<<numInDet/Rate<<endl;
+    cout<<"Time : "<<numLines/Rate<<endl;
 
     file.close();
     myTree->Write();

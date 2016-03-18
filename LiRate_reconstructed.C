@@ -72,8 +72,8 @@ void LiRate_reconstructed (){
     TBranch *b_momZ=myTree->Branch("momZ",&Zp,"momZ/d");
     TBranch *b_e=myTree->Branch("Energy",&E,"Energy/d");
     TBranch *b_check_2=myTree->Branch("check",&check,"check/i");
-    TBranch *b_Length=myTree->Branch("Length",&Length,"Length[1]/d");
-    TBranch *b_LiRate=myTree->Branch("LiRate",&LiRate,"LiRate[1]/d");
+    TBranch *b_Length=myTree->Branch("Length",&Length,"Length/d");
+    TBranch *b_LiRate=myTree->Branch("LiRate",&LiRate,"LiRate/d");
 
     for (int i = 0 ; i<nentries ; i++){
         myChain->GetEntry(i);
@@ -96,9 +96,9 @@ void LiRate_reconstructed (){
                 K[0]=(-b+TMath::Sqrt(d))/(2*a);
                 K[1]=(-b-TMath::Sqrt(d))/(2*a);
                 numInDet++;
-                Length[0]=TMath::Sqrt( Xp*Xp*(K[1]-K[0])*(K[1]-K[0]) +  Yp*Yp*(K[1]-K[0])*(K[1]-K[0]) +Zp*Zp*(K[1]-K[0])*(K[1]-K[0]) );
-                LiRate[0]=factor*pow(E,0.74)*Length[0];
-                LiRateInt+=LiRate[0];
+                Length=TMath::Sqrt( Xp*Xp*(K[1]-K[0])*(K[1]-K[0]) +  Yp*Yp*(K[1]-K[0])*(K[1]-K[0]) +Zp*Zp*(K[1]-K[0])*(K[1]-K[0]) );
+                LiRate=factor*pow(E,0.74)*Length;
+                LiRateInt+=LiRate;
                 myTree->Fill();
             }//if d
         }//if NTracks
@@ -106,7 +106,7 @@ void LiRate_reconstructed (){
     tree_raw->GetEntry(tree_raw->GetEntries()-1);
     cout<<"Number of muons in detector : "<<numInDet_raw<<endl;
     cout<<"Lithium rate from simulation : "<<LiRateInt_raw<<endl;
-    LiRateInt=(LiRateInt*3.5)/numInDet_raw;
+    LiRateInt=(LiRateInt*13)/nentries;
     cout<<"Number of reconstructed muons : "<<numInDet<<endl;
     cout<<"Lithium rate from TT : "<<LiRateInt<<endl;
     cout<<"ratio : "<<LiRateInt/LiRateInt_raw<<endl;
